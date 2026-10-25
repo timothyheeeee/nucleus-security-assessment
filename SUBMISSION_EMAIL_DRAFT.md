@@ -20,7 +20,7 @@ Thank you for the opportunity to complete the Engineering Intern technical asses
 
 Below are my answers to the follow-up questions from the assessment Gist. The full project—including the Python webhook code review, calculator application, tests, and AI prompt records—is in this public repository:
 
-**GitHub:** `REPLACE_WITH_PUBLIC_REPO_URL`
+**GitHub:** https://github.com/timothyheeeee/nucleus-security-assessment
 
 I reviewed the **Python** webhook (not PHP).
 
