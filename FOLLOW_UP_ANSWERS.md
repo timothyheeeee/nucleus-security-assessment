@@ -140,7 +140,7 @@ Prompts/outputs: `AI_FULL_INTERACTIONS.md` (verbatim recovered Cursor prompts + 
 
 **Well:** Fast structure from the Gist; line-referenced review; thin Flask over testable `calculator.py`; incremental features without `eval`; useful when asked for realistic SQLite impact and “do not rewrite if correct.”
 
-**Poorly:** Happy-path bias (Overflow / precision reduction / `1e50` quantize edge needed audits); environment blindness (stale server); early docs sounded like generic reports; incomplete in-repo transcript export even though chat history still exists in Cursor.
+**Poorly:** Happy-path bias (Overflow / precision reduction / `1e50` quantize edge needed audits); environment blindness (stale server); early docs sounded like generic reports. Cursor prompts and user-visible AI text are now recovered in `AI_FULL_INTERACTIONS.md` (the final disclosure interaction is only partially captured in that export).
 
 **Changed approach:** Narrower prompts (audit vs feature vs docs vs understanding); when equals failed, verify live HTTP instead of rewriting the app; fix precision by separating working serialization from display rounding and keeping the numeric range consistent with display quantize; document attribution and evidence explicitly.
 
