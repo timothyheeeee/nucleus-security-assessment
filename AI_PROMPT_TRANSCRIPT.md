@@ -4,9 +4,9 @@ This file supports the Nucleus assessment requirement to share AI prompts and ou
 
 ## Honesty constraints
 
-- **Source of truth for long verbatim text:** the Cursor chat session that produced this repository.  
-- **This file:** structured, chronological recovery of what actually happened.  
-- **Not fabricated:** where full agent token streams were not exported into the repo, that limitation is stated. Summaries below describe verified artefacts (files, tests, HTTP behaviour), not invented dialogue.
+- **Verbatim status:** Most historical Cursor prompts/outputs are **NOT RECOVERABLE** as full text in this repository (chat was not exported byte-for-byte). Entries below are annotated summaries tied to artefacts—not labelled “verbatim” unless quoted.
+- ChatGPT also helped draft some editorial / assessment instruction text for the candidate; that is AI assistance and is disclosed here rather than hidden.
+- No secrets/tokens from `gh` login are recorded in these markdown files.
 
 Tool: **Cursor** (agent labelled Auto / Composer-family in-product).  
 Assessment Gist: https://gist.github.com/zlee-nucleussec/642cf8247c11e7a34bb03e318af549b4
@@ -138,8 +138,26 @@ Also confirmed in code/runtime: no `eval(`, precedence `10+5*2→20`, parenthese
 
 ---
 
+## Prompt 8 — Evidence-first final engineering pass (this session)
+
+**Prompt text status:** NOT RECOVERABLE as a full paste here without dumping the entire user message; the instruction lived in the Cursor chat titled along the lines of “Nucleus Security assessment — evidence-first final engineering pass”. Goal excerpt: fix destructive 16-digit `format_result` reduction; use `localcontext`; add regression tests; refine webhook review accuracy; honest AI provenance; no commit/push/email.
+
+**Outcome (verified artefacts):**
+
+- Reproduced: `format_rounded(100000000000000.005, 2)` via old `format_result` path → `100000000000000` (wrong).  
+- Fixed: working serialization preserves fraction; display rounding → `100000000000000.01`.  
+- `localcontext(WORKING_CONTEXT)` for parse/arithmetic/format; thread consistency test.  
+- pytest: **70 passed**.  
+- `CODE_REVIEW.md` impact wording tightened (SQLite execute / connection close / HMAC).  
+- Docs/email draft updated; `FINAL_AUDIT_REPORT.md` added.
+
+**Re-prompt?** N/A (single engineering gate).  
+**Classification:** Defect fix + compliance documentation (not a new calculator feature).
+
+---
+
 ## How to give Nucleus the “full” prompts
 
-1. Attach or point to this file + `AI_USAGE.md` in the repo.  
-2. If they want unabridged Cursor transcripts, export/share the chat from Cursor (candidate action).  
-3. Do **not** claim this markdown file contains every agent token; it contains the recoverable engineering record.
+1. Point reviewers to this file + `AI_USAGE.md`.  
+2. If they need unabridged chats, export from Cursor (candidate action)—this repo does **not** currently contain a complete verbatim dump.  
+3. Do not claim full compliance with “all prompts and outputs” beyond what is recoverable above.

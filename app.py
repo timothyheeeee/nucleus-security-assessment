@@ -6,7 +6,7 @@ from flask import Flask, jsonify, render_template, request
 
 from calculator import (
     CalculationError,
-    calculate,
+    calculate_decimal,
     evaluate_expression,
     format_result,
     format_rounded,
@@ -36,7 +36,7 @@ def api_calculate():
     - expression: {expression}  (chained ops with precedence)
 
     Optional decimal_places (0–8) adds a rounded `display` field.
-    `result` is always the normalised exact value used for further maths.
+    `result` is the working-precision serialization (not display-rounded).
     """
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
@@ -53,20 +53,19 @@ def api_calculate():
         if "expression" in data:
             if not isinstance(data["expression"], str):
                 return jsonify({"error": "Expression must be a string"}), 400
-            exact_decimal = evaluate_expression(data["expression"])
-            exact = format_result(exact_decimal)
+            working = evaluate_expression(data["expression"])
         else:
             missing = [field for field in ("a", "b", "operator") if field not in data]
             if missing:
                 return jsonify(
                     {"error": f"Missing required field(s): {', '.join(missing)}"}
                 ), 400
-            exact = calculate(data["a"], data["b"], data["operator"])
-            exact_decimal = parse_number(exact, "result")
+            working = calculate_decimal(data["a"], data["b"], data["operator"])
 
-        payload = {"result": exact}
+        # Serialize after computing; round display from the Decimal, not a shortened string.
+        payload = {"result": format_result(working)}
         if places is not None:
-            payload["display"] = format_rounded(exact_decimal, places)
+            payload["display"] = format_rounded(working, places)
         return jsonify(payload), 200
 
     except CalculationError as exc:
@@ -75,7 +74,7 @@ def api_calculate():
 
 @app.post("/api/format")
 def api_format():
-    """Re-round an exact result for display without recalculating an expression."""
+    """Re-round a working-precision result for display without recalculating."""
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
@@ -97,5 +96,4 @@ def api_format():
 
 
 if __name__ == "__main__":
-    # Debug disabled by default — suitable for local demo without exposing the debugger.
     app.run(host="127.0.0.1", port=5000, debug=False)

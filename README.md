@@ -43,14 +43,15 @@ Official assessment source: [Engineering Intern Interview Questions Gist](https:
 - Digits and operators accumulate in the black display as a readable expression
 - Equals evaluates the full expression on the Python backend (no `eval`)
 - Changing an operator before entering the next number replaces the pending operator
-- After a result, entering a digit starts a new expression; choosing an operator continues from the stored **high-precision** result (not the rounded display string)
-- Changing decimal places after a result re-rounds that stored value without recalculating the expression
+- After a result, entering a digit starts a new expression; choosing an operator continues from the stored **working-precision** `result` (not the rounded `display` string)
+- Changing decimal places after a result re-rounds that stored value via `/api/format` without recalculating the expression
 
-**Rounding**
+**Precision policy (important)**
 
-- Applied only to the final displayed answer (`decimal.ROUND_HALF_UP`)
-- Intermediate arithmetic uses `Decimal` with configured working precision (not infinite exactness)
-- Trailing zeros are stripped for display (`2.50` → `2.5`, `5.00` → `5`)
+- Working arithmetic uses `decimal.localcontext` with **50 significant digits** (`WORKING_PREC`) — finite, not infinite exactness
+- API `result` is a working-precision serialization (bounded length/magnitude)
+- API `display` applies user decimal places with `ROUND_HALF_UP` on the full working value
+- Numeric strings are capped (`MAX_NUMERIC_LENGTH = 64`); extreme exponents are rejected with JSON 400 errors
 
 **Scope relative to the Gist**
 
@@ -100,7 +101,7 @@ The server binds to `127.0.0.1` with Flask debug mode **off** by default.
 python -m pytest -v
 ```
 
-Latest local run: **62 passed**, 0 failed, 0 skipped.
+Latest agent-run suite: **70 passed**, 0 failed, 0 skipped (`python -m pytest -q`).
 
 ## API example
 
@@ -215,4 +216,6 @@ Browser (expression state + rounding preference)
 | [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md) | Chronological recoverable prompt/output record |
 | [`FOLLOW_UP_ANSWERS.md`](FOLLOW_UP_ANSWERS.md) | Answers to official follow-up questions |
 | [`MANUAL_VERIFICATION.md`](MANUAL_VERIFICATION.md) | Browser checks for the candidate before submit |
+| [`PERSONAL_CONFIRMATION_CHECKLIST.md`](PERSONAL_CONFIRMATION_CHECKLIST.md) | Private checklist (fill confirms; not required in email body) |
 | [`SUBMISSION_EMAIL_DRAFT.md`](SUBMISSION_EMAIL_DRAFT.md) | Full email draft (copy/send manually) |
+| [`FINAL_AUDIT_REPORT.md`](FINAL_AUDIT_REPORT.md) | Evidence-first audit report for this pass |

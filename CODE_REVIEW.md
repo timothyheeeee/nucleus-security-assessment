@@ -46,9 +46,9 @@ cur.execute(
 )
 ```
 
-**Why it matters:** Any single quote in the body or fields breaks out of the string literal. An authenticated vendor (or anyone who can forge a valid signature if the secret is weak) can execute arbitrary SQL.
+**Why it matters:** Any single quote in the body or fields breaks out of the string literal. An authenticated vendor (or anyone who can forge a valid signature if the secret is weak) can alter statement structure.
 
-**Impact:** Data theft/exfiltration via audit table, privilege escalation in the DB, destructive writes (`DROP TABLE`, etc.).
+**Impact (realistic for SQLite `cursor.execute`):** Malformed requests that raise errors; inserted `email`/`role`/`raw_json` values shaped by injection (e.g. closing quotes and injecting additional SQL *fragments*). Note: the default SQLite Python `Cursor.execute()` path does **not** run multiple stacked statements in one call the way some other drivers do—so citing `DROP TABLE` via multi-statement batching as a demonstrated exploit here would overstate the driver behaviour. Injection remains a **merge blocker** because untrusted data still reaches SQL text.
 
 **Fix:** Use parameterised queries only:
 
@@ -89,7 +89,7 @@ cur.execute(
 )
 ```
 
-(Exact SQL depends on the schema — which is not created in this PR and should be.)
+Requires a **UNIQUE** constraint on `users.email` for `ON CONFLICT(email)` to work. Role updates via upsert should still pass through an internal allowlist (Finding 3)—do not treat conflict-update as authorisation.
 
 ---
 
@@ -154,7 +154,7 @@ Or require a non-default secret and refuse to start if it equals `"dev-secret"` 
 
 **What:** `return expected == sig` compares hex digests with ordinary string equality.
 
-**Why it matters:** In theory, timing differences can help an attacker recover the expected digest byte-by-byte. Practicality over a network varies, but for a security product assessment this is a clear hardening miss. (Still use the vendor’s `SHA256(secret+body)` construction for *computing* the expected value.)
+**Why it matters:** Non-constant-time equality is a standard hardening miss. Over a high-latency network the practical exploitability of digest timing leaks is often limited, but `hmac.compare_digest` is still the correct comparison API. Keep computing the digest with the **vendor** formula `SHA256(secret + body)`—do not silently switch the MAC construction to HMAC-SHA256 (compatibility break).
 
 **Fix:**
 
@@ -177,14 +177,26 @@ Ensure both sides are strings of comparable form (e.g. always hex).
 
 - `body.decode("utf-8")` / `json.loads(...)` can raise (`UnicodeDecodeError`, `JSONDecodeError`).
 - No check that `payload` is a `dict`, or that `email` is a non-empty string.
-- DB errors are uncaught; connection is never closed (`get_db()` opens a connection with no context manager).
+- DB errors are uncaught; `get_db()` opens a connection with no reliable cleanup.
 - No rollback on failure.
 
 **Why it matters:** Malformed bodies after a valid signature (or encoding edge cases) yield 500s, leaked stack traces depending on Flask config, and potential connection leaks.
 
 **Impact:** Availability issues; noisy ops; harder auditability when bad payloads arrive.
 
-**Fix:** Validate schema explicitly; catch parse errors → 400; use `with get_db() as db:` / try/except with `rollback()`; close cursor/connection reliably.
+**Fix:** Validate schema explicitly; catch parse errors → 400. For SQLite, `with sqlite3.connect(...) as db:` commits/rollbacks the transaction on context exit but **does not by itself guarantee connection close**—pair it with an explicit `db.close()` in `finally`, or use a pattern that closes the connection:
+
+```python
+db = get_db()
+try:
+    ...
+    db.commit()
+except Exception:
+    db.rollback()
+    raise
+finally:
+    db.close()
+```
 
 ---
 
@@ -196,11 +208,11 @@ Ensure both sides are strings of comparable form (e.g. always hex).
 
 **What:** Full raw JSON (email, role, metadata) is stored. The PR does not show access control, encryption at rest, or retention policy for `webhook_audit`.
 
-**Why it matters:** Audit tables often become a high-value PII store. Combined with SQL injection, that table is an exfiltration target.
+**Why it matters:** Audit tables often become a high-value PII store. Combined with SQL injection, that table is an attractive target. Retention/encryption-at-rest are **product/compliance** decisions—not fully specified by the assessment snippet—so treat them as follow-ups unless your org already requires them.
 
-**Impact:** Privacy/compliance exposure; broadened blast radius of Finding 1.
+**Impact:** Privacy exposure risk; broadened blast radius of Finding 1.
 
-**Fix:** Parameterised insert (Finding 1); restrict DB permissions; consider redacting fields; document retention. Do not log secrets if vendors ever include them in metadata.
+**Fix:** Parameterised insert (Finding 1); restrict DB permissions; redact sensitive fields if needed; document retention when required.
 
 ---
 
@@ -212,7 +224,7 @@ Ensure both sides are strings of comparable form (e.g. always hex).
 
 **What:** Signature verifies integrity/authenticity of *this* body but not freshness. Nothing prevents replaying a captured valid request.
 
-**Why it matters:** Depends on vendor protocol (not fully specified here). If the vendor does not include expiring timestamps or delivery IDs, replays can re-apply role changes.
+**Why it matters:** Conditional on vendor protocol (not fully specified in the Gist). If deliveries can be replayed, role changes may re-apply. This is a design consideration unless the vendor contract already defines freshness rules.
 
 **Assumption:** Vendor may document replay guidance elsewhere; this PR does not implement any.
 

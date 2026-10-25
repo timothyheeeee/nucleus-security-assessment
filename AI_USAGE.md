@@ -37,14 +37,15 @@ Long verbatim Cursor transcripts are **not** fully duplicated in-repo; they rema
 Feature prompts (3–4) are **new requirements**, not “AI failed once so we yelled at it.”  
 Audit (2) and stale-server (5) are **verification / environment** lessons.
 
-## Latest verification (submission-prep pass)
+## Latest verification (precision-fix / audit pass)
 
 ```text
 Command: .\.venv\Scripts\python.exe -m pytest -q
-Result:  62 passed, 0 failed, 0 skipped
+Result:  70 passed, 0 failed, 0 skipped
 ```
 
-Spot checks: `10 + 5 * 2` → `20`; `(10 + 5) * 2` → `30`; `format_rounded(10/3, 2)` → `3.33`; no `eval(` in project `.py`/`.js`.  
+Spot checks: `10 + 5 * 2` → `20`; `(10 + 5) * 2` → `30`; `format_rounded(10/3, 2)` → `3.33`;  
+`100000000000000.005` at 2 places → `100000000000000.01` (working `result` retains `.005`).  
 These runs were executed in the Cursor environment unless the candidate re-runs them personally.
 
 ## What AI did well

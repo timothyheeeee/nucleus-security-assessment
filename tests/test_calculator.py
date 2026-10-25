@@ -54,7 +54,7 @@ class TestCalculate:
 
     def test_input_too_long(self):
         with pytest.raises(CalculationError, match="maximum length"):
-            calculate("1" * 33, "1", "+")
+            calculate("1" * 65, "1", "+")
 
     def test_negative_zero_normalised(self):
         assert calculate("-0", "0", "+") == "0"
@@ -63,13 +63,13 @@ class TestCalculate:
         assert calculate(12, 3, "/") == "4"
 
     def test_repeating_division_is_reenterable(self):
-        # Results must stay within MAX_INPUT_LENGTH so chaining works.
+        # Results must stay within MAX_NUMERIC_LENGTH so chaining works.
         result = calculate("1", "7", "/")
-        assert len(result) <= 32
+        assert len(result) <= 64
         assert calculate(result, "0", "+") == result
 
     def test_overflow_rejected(self):
-        with pytest.raises(CalculationError, match="Calculation failed"):
+        with pytest.raises(CalculationError, match="exceeds supported limits|Calculation failed"):
             calculate("9e999999", "9e999999", "*")
 
 
