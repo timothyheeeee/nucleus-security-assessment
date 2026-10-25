@@ -178,6 +178,47 @@ Also confirmed in code/runtime: no `eval(`, precedence `10+5*2→20`, parenthese
 
 ---
 
+## Prompt 10 — Pre-submission technical review (genuine new conversation)
+
+**When:** After the cleanup commit (`74810ec`) was already on GitHub; before email send.  
+
+**Prompt text status:** Full user message present in Cursor chat. Recoverable structure and intent below; not every paragraph is duplicated here (length). This entry is **new** relative to prompts 1–9 and must not be backdated as an earlier project stage.
+
+**Recoverable user intent (accurate paraphrase of the real prompt):**
+
+1. Webhook: explain attacks actually possible with Python’s SQLite driver (not generic SQLi); check auth vs authz for `role`; confirm vendor `SHA256(secret + body)` should not be silently replaced with HMAC.  
+2. Calculator precision: verify working (50 sig digits) vs display rounding on `0.1+0.2`, `1/7` then `×7`, `100000000000000.005` @ 2 places, large/small values, reuse of prior results; smallest fix only if genuine problem.  
+3. Expression evaluation: check tokenizer, precedence, negatives, parentheses; remaining edge cases for a small calculator.  
+4. Testing: explain unit vs integration vs manual browser coverage given the stale-Flask incident; run pytest and report actual output; do not claim tests as personally executed by the candidate.  
+5. Code review prioritisation: which findings block merge; distinguish confirmed defects from assumptions.  
+6. Final assessment: valid vs overstated concerns; what to change vs unnecessary complexity; trade-offs before rewriting.  
+Constraints: no push/email without permission; keep a genuine record of this discussion; do not present it as something that happened earlier.
+
+**AI output (summary of the actual response — full prose remains in Cursor chat):**
+
+- SQLite `execute`: multi-statement `DROP TABLE` often overstated; single-statement injection still real (local demo: `ignored', 'admin');--` inserted admin; expression/subquery forms can shape values).  
+- Auth ≠ authz for vendor `role` — approach confirmed.  
+- Keep vendor digest; use `compare_digest` for comparison only — approach confirmed.  
+- Precision design confirmed correct; frontend reuses API `result` (`exactResult`), not rounded `display`; `1/7*7` stays finite `0.999…`; no calculator rewrite recommended.  
+- Parser appropriate; rejects `eval`-style input; sci-notation tokens not supported (acceptable for keypad calculator).  
+- Tests cover calculator/API; browser/process drift still needs live checks.  
+- Merge blockers: SQLi, secret default, fake upsert, uncontrolled roles.  
+- Agent pytest: **72 passed** (`py -3 -m pytest -q`).  
+
+**Code change from that review:** none to the calculator. Later submission-completeness pass added the concrete SQLite example into `CODE_REVIEW.md` and documented this prompt as Prompt 10.
+
+**Classification:** Understanding / verification conversation (not a feature rebuild).
+
+---
+
+## Prompt 11 — Final submission-completeness pass (this update)
+
+**Objective:** Reflect Prompt 10 in public docs; resolve former `[PERSONAL CONFIRMATION]` slots with evidence-limited statements only; refresh private email draft; no commit/push/email without approval.
+
+**Classification:** Documentation / submission hygiene.
+
+---
+
 ## ChatGPT (submission drafting)
 
 **Role:** Secondary AI used to review/draft assessment instruction text and help polish submission wording.  

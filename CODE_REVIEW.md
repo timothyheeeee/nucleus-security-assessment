@@ -48,7 +48,7 @@ cur.execute(
 
 **Why it matters:** Any single quote in the body or fields breaks out of the string literal. An authenticated vendor (or anyone who can forge a valid signature if the secret is weak) can alter statement structure.
 
-**Impact (realistic for SQLite `cursor.execute`):** Malformed requests that raise errors; inserted `email`/`role`/`raw_json` values shaped by injection (e.g. closing quotes and injecting additional SQL *fragments*). Note: the default SQLite Python `Cursor.execute()` path does **not** run multiple stacked statements in one call the way some other drivers do—so citing `DROP TABLE` via multi-statement batching as a demonstrated exploit here would overstate the driver behaviour. Injection remains a **merge blocker** because untrusted data still reaches SQL text.
+**Impact (realistic for SQLite `cursor.execute`):** Malformed requests that raise errors; inserted `email`/`role`/`raw_json` values shaped by injection. The default SQLite Python `Cursor.execute()` path does **not** run multiple stacked statements in one call—so citing `DROP TABLE` via multi-statement batching as a demonstrated exploit here would overstate the driver behaviour. Single-statement injection is still enough to matter. In a local reproduction against the same INSERT shape: `email = ignored', 'admin');--` inserted `('ignored', 'admin')`; quote-breaking expressions such as `x' || 'y` and subquery forms can also control written values. Injection remains a **merge blocker** because untrusted data still reaches SQL text.
 
 **Fix:** Use parameterised queries only:
 

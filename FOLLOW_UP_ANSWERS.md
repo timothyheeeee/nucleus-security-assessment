@@ -4,7 +4,7 @@ Answers to the Nucleus Security Engineering Intern assessment Gist questions.
 AI records: [`AI_USAGE.md`](AI_USAGE.md), [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md).  
 Webhook review: [`CODE_REVIEW.md`](CODE_REVIEW.md).
 
-Items marked `[PERSONAL CONFIRMATION]` need your own one-sentence answer before you send the email. Do not invent those answers.
+Personal verification notes below state only what the conversation record supports. Where a personal action was not established, that limitation is written plainly.
 
 ---
 
@@ -25,8 +25,9 @@ Work went through these stages (same order as the transcript):
 7. Interview-style docs polish  
 8. Precision fix — destructive 16-digit `format_result`  
 9. Public-repo cleanup — `1e50` magnitude/quantize consistency  
+10. Pre-submission technical review — webhook SQLite realism, auth vs authz, precision cases, parser/tests, merge priorities (docs/understanding; no calculator rewrite)
 
-Recoverable prompt text, paraphrases, and verified outputs are in `AI_PROMPT_TRANSCRIPT.md`. Full Cursor chat history still exists in the IDE; this repository does **not** contain a complete token-level export. Where an entry is a paraphrase or summary rather than a pasted verbatim prompt, the transcript says so. I am not claiming that text is “unrecoverable” merely because it was not exported into git.
+Recoverable prompt text, paraphrases, and verified outputs are in `AI_PROMPT_TRANSCRIPT.md`. Full Cursor chat history still exists in the IDE; this repository does **not** contain a complete token-level export. Where an entry is a paraphrase or summary rather than a pasted verbatim prompt, the transcript says so.
 
 Cursor drafted `CODE_REVIEW.md` and most of the implementation. I treat that as material to verify against the Gist and tests, not as automatically correct.
 
@@ -79,7 +80,7 @@ Cursor drafted `CODE_REVIEW.md` and most of the implementation. I treat that as 
 - **Hoped:** Clearer hiring-manager writing and honest AI attribution.  
 - **Actually did:** Tightened follow-ups and AI disclosure; agent-run pytest reported 62 passed at that checkpoint.  
 - **Re-prompt?** Editorial.  
-- **Approach change:** Separate evidence (tests, HTTP) from personal feelings; mark the latter for candidate confirmation.
+- **Approach change:** Separate evidence (tests, HTTP) from personal feelings; avoid inventing unverified personal claims.
 
 #### Prompt 8 — Precision fix (16-digit reduction)
 
@@ -88,18 +89,25 @@ Cursor drafted `CODE_REVIEW.md` and most of the implementation. I treat that as 
 - **Re-prompt?** Single engineering gate.  
 - **Approach change:** Never serialize away precision that later maths or display rounding still need.
 
-#### Prompt 9 — Cleanup / `1e50` boundary (this pass)
+#### Prompt 9 — Cleanup / `1e50` boundary
 
 - **Hoped:** Employer-facing repo hygiene + consistent numeric range.  
-- **Actually did:** Tightened magnitude so values like `1e50` cannot parse while failing at quantize; added regression; moved private submission drafts out of the public tree; synced docs. Latest agent-run: **72 passed** (`py -3 -m pytest -q`, Python 3.14.3).  
+- **Actually did:** Tightened magnitude so values like `1e50` cannot parse while failing at quantize; added regression; moved private submission drafts out of the public tree; synced docs. Suite at **72 passed** (`py -3 -m pytest -q`, Python 3.14.3, Cursor agent environment).  
 - **Re-prompt?** Continuation of the evidence-first cleanup brief.  
 - **Approach change:** Prefer a consistent supported range over a parse that cannot display-round within `WORKING_PREC`.
 
+#### Prompt 10 — Pre-submission technical review (this conversation)
+
+- **Hoped:** Confirm I understand webhook SQLi under Python’s SQLite driver, auth vs authz for `role`, vendor SHA256 vs HMAC, working vs display precision, restricted parsing, test vs live-process coverage, and merge-blocker severity—without unnecessary rewrites.  
+- **Actually did:** Agent re-ran pytest (**72 passed**); spot-checked precision/expression cases; confirmed frontend chains from API `result` not `display`; reproduced single-statement SQLite injection shaping (including forcing `admin`); concluded calculator needs **no** code change for submission; enriched `CODE_REVIEW.md` impact wording with that concrete SQLite behaviour.  
+- **Re-prompt?** Understanding / verification, not a feature rebuild.  
+- **Approach change:** Prefer realistic driver impact and “change only if wrong” over looking more advanced.
+
 **Implementation facts (current code):** 50-significant-digit working precision; explicit local Decimal contexts; no destructive 16-digit working serialization; display-only `ROUND_HALF_UP`; precision regressions; restricted expression evaluation (no `eval`); magnitude capped for roundability (`MAX_ABS_ADJUSTED_EXPONENT = 41`).
 
-`[PERSONAL CONFIRMATION]` Did you personally re-run pytest, or only review Cursor’s reported results?
+**Pytest verification (conversation record):** Automated results cited here were produced in the **Cursor agent** environment (`py -3 -m pytest -q` → 72 passed). This record does **not** establish that I separately re-ran the suite myself outside that environment.
 
-`[PERSONAL CONFIRMATION]` Did you personally click through the calculator in a browser after the precision / cleanup fixes?
+**Browser verification (conversation record):** This record does **not** establish a personal browser click-through of the calculator after the precision/cleanup fixes. Keypad/UX behaviour remains covered by design and API tests, not by a documented candidate E2E session.
 
 ---
 
@@ -107,7 +115,7 @@ Cursor drafted `CODE_REVIEW.md` and most of the implementation. I treat that as 
 
 ### 1. How far were you able to get?
 
-Functional web calculator: expression display, `+ − × ÷`, decimals/negatives, parentheses, precedence, AC/backspace/±, division-by-zero handling, decimal-places control (default 2, `ROUND_HALF_UP` for **display**), Flask APIs `/api/calculate` and `/api/format`, pytest (**72** agent-run). Webhook review in `CODE_REVIEW.md`.
+Functional web calculator: expression display, `+ − × ÷`, decimals/negatives, parentheses, precedence, AC/backspace/±, division-by-zero handling, decimal-places control (default 2, `ROUND_HALF_UP` for **display**), Flask APIs `/api/calculate` and `/api/format`, pytest (**72** in Cursor agent runs). Webhook review in `CODE_REVIEW.md`.
 
 **Gist minimum** = frontend + backend calculator. Expression UI, precedence, parentheses, and rounding are **enhancements**. No automated browser E2E. One-hour completion is **not** claimed.
 
@@ -118,7 +126,7 @@ Functional web calculator: expression display, `+ − × ÷`, decimals/negatives
 - Safe expression evaluation without `eval`  
 - Webhook review: SQLi impact without overstating SQLite multi-statement exploits; HMAC vs vendor contract  
 
-`[PERSONAL CONFIRMATION]` Which challenge was hardest for you personally?
+**Hardest challenge (evidence-limited):** The conversation record does not include a separate personal ranking of which challenge “felt” hardest. The issues that required the most corrective engineering attention in the project were (1) environment drift (stale Flask vs green tests) and (2) keeping working Decimal serialization honest for display rounding and chaining.
 
 ### 3. If you were given unlimited time, what additional functionality would you include?
 
@@ -126,18 +134,18 @@ Browser E2E (e.g. Playwright), CI, and basic public-deploy hardening—not accou
 
 ### 4. If you used AI: prompts; what it did well; poorly; how prompting changed
 
-Prompts/outputs: `AI_USAGE.md`, `AI_PROMPT_TRANSCRIPT.md` (verbatim where exported/quoted; otherwise annotated paraphrase or summary). ChatGPT contributed to reviewing/drafting some submission material.
+Prompts/outputs: `AI_USAGE.md`, `AI_PROMPT_TRANSCRIPT.md` (verbatim where exported/quoted; otherwise annotated paraphrase or summary). ChatGPT contributed to reviewing/drafting some submission material. Prompt 10 is the pre-submission technical review conversation.
 
-**Well:** Fast structure from the Gist; line-referenced review; thin Flask over testable `calculator.py`; incremental features without `eval`.
+**Well:** Fast structure from the Gist; line-referenced review; thin Flask over testable `calculator.py`; incremental features without `eval`; useful when asked for realistic SQLite impact and “do not rewrite if correct.”
 
 **Poorly:** Happy-path bias (Overflow / precision reduction / `1e50` quantize edge needed audits); environment blindness (stale server); early docs sounded like generic reports; incomplete in-repo transcript export even though chat history still exists in Cursor.
 
-**Changed approach:** Narrower prompts (audit vs feature vs docs); when equals failed, verify live HTTP instead of rewriting the app; fix precision by separating working serialization from display rounding and keeping the numeric range consistent with display quantize; document attribution and evidence explicitly.
+**Changed approach:** Narrower prompts (audit vs feature vs docs vs understanding); when equals failed, verify live HTTP instead of rewriting the app; fix precision by separating working serialization from display rounding and keeping the numeric range consistent with display quantize; document attribution and evidence explicitly.
 
-`[PERSONAL CONFIRMATION]` What will you do differently next AI-assisted take-home?
+**Next AI-assisted take-home (from evidenced approach, not invented feelings):** Start earlier with failure-mode and process checks; keep agent-run pytest clearly labelled as agent-run until I personally re-run or browser-check when I need to defend the work; ask for realistic severity (e.g. SQLite `execute` vs stacked-statement myths) before changing code.
 
 ---
 
 ## Additional thoughts (optional for email)
 
-This exercise combined reviewing untrusted input handling with building a small, testable service. AI accelerated drafts; judgement still matters for contracts, precision, and verifying the process you think is running.
+This exercise combined reviewing untrusted input handling with building a small, testable service. AI accelerated drafts; judgement still matters for contracts, precision, and verifying the process you think is running. The pre-submission review reinforced that multi-statement `DROP TABLE` claims are often overstated for Python’s SQLite `execute`, while single-statement injection and role trust remain real merge blockers—and that the calculator’s working-vs-display design did not need further complexity for this assessment.

@@ -104,9 +104,9 @@ The server binds to `127.0.0.1` with Flask debug mode **off** by default.
 python -m pytest -q
 ```
 
-Latest agent-run suite (this cleanup pass): **72 passed**, 0 failed, 0 skipped.  
-Command: `py -3 -m pytest -q` · Python 3.14.3 · project `.venv` available.  
-These results were produced in the Cursor agent environment unless you re-run them yourself.
+Latest agent-run suite: **72 passed**, 0 failed, 0 skipped.  
+Command: `py -3 -m pytest -q` · Python 3.14.3.  
+These results were produced in the Cursor agent environment. A separate candidate-only re-run is not claimed in the submission docs unless you do that yourself.
 
 ## API example
 
