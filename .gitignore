@@ -33,3 +33,9 @@ Thumbs.db
 *.db
 *.sqlite3
 *.log
+
+# Local transcript extraction helpers (not part of submission)
+_transcript_extract/
+_extract_transcript.py
+_build_full_interactions.py
+_scan_secrets.py

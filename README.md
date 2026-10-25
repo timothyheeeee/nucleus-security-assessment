@@ -9,7 +9,7 @@ This repository contains:
 1. **Code review** of the assessment’s Python webhook (`CODE_REVIEW.md`)
 2. **Calculator application** — Flask backend + HTML/CSS/vanilla JS frontend
 3. **Automated tests** (pytest)
-4. **AI usage transparency** (`AI_USAGE.md`, `AI_PROMPT_TRANSCRIPT.md`)
+4. **AI usage transparency** (`AI_USAGE.md`, `AI_PROMPT_TRANSCRIPT.md`, `AI_FULL_INTERACTIONS.md`)
 5. **Follow-up answers** (`FOLLOW_UP_ANSWERS.md`)
 
 Official assessment source: [Engineering Intern Interview Questions Gist](https://gist.github.com/zlee-nucleussec/642cf8247c11e7a34bb03e318af549b4)
@@ -204,7 +204,7 @@ Browser (expression state + rounding preference)
 - Not a hardened production deployment (no TLS termination, rate limiting, or reverse proxy config)
 - Frontend calculation always requires the backend (offline use not supported)
 - Long expressions scroll horizontally inside the display; very long input is length-limited server-side
-- AI prompts/outputs are documented as recoverable summaries plus artefact links; a complete token-level Cursor export is not checked into this repo (see `AI_PROMPT_TRANSCRIPT.md`)
+- AI prompts are recovered verbatim from the Cursor agent transcript into `AI_FULL_INTERACTIONS.md`; assistant tool JSON is omitted (see `AI_PROMPT_TRANSCRIPT.md` index). ChatGPT drafting chats were not available in that archive.
 
 ## Possible future improvements
 
@@ -218,5 +218,6 @@ Browser (expression state + rounding preference)
 |------|---------|
 | [`CODE_REVIEW.md`](CODE_REVIEW.md) | Python webhook PR review |
 | [`AI_USAGE.md`](AI_USAGE.md) | AI assistance overview |
-| [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md) | Chronological recoverable prompt/output record |
+| [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md) | Chronological index of AI interactions |
+| [`AI_FULL_INTERACTIONS.md`](AI_FULL_INTERACTIONS.md) | Recovered original prompts + user-visible AI text |
 | [`FOLLOW_UP_ANSWERS.md`](FOLLOW_UP_ANSWERS.md) | Answers to official follow-up questions |

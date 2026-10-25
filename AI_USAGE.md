@@ -1,10 +1,12 @@
 # AI Usage Record
 
 Nucleus encourages AI use and asks candidates to share prompts and reflect on them.  
-This file is the **high-level map**. The chronological recoverable record is in [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md).  
-Follow-up answers that cite this work: [`FOLLOW_UP_ANSWERS.md`](FOLLOW_UP_ANSWERS.md).
+This file is the **high-level map**.  
+Chronological index: [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md).  
+**Recovered original prompts + user-visible AI text:** [`AI_FULL_INTERACTIONS.md`](AI_FULL_INTERACTIONS.md).  
+Follow-up answers: [`FOLLOW_UP_ANSWERS.md`](FOLLOW_UP_ANSWERS.md).
 
-Cursor chat history for this project still exists in the IDE. This repository documents recoverable paraphrases, quoted fragments, and verified artefacts. It does **not** claim a complete token-level export is checked into git. That is an export gap, not proof that the original text never existed.
+Cursor agent transcript JSONL for this assessment was recovered locally (31 user turns). Prompts are included verbatim. Assistant **tool JSON** is omitted; user-visible assistant text is concatenated per turn. ChatGPT drafting chats remain **outside** accessible Cursor archives.
 
 ## Tooling
 
@@ -41,9 +43,12 @@ Cursor chat history for this project still exists in the IDE. This repository do
 8. **Defect fix** — destructive 16-digit working serialization; `localcontext` / 50-digit working precision  
 9. **Cleanup** — public/private file split; `1e50` magnitude vs quantize consistency; doc sync  
 10. **Technical review** — SQLite realism, auth vs authz, precision cases, parser/tests, merge blockers; no unnecessary rewrite  
+11. **Submission-completeness docs** — evidence-limited personal claims; Prompt 10 recorded  
+12. **AI disclosure packaging** — recover JSONL into `AI_FULL_INTERACTIONS.md` (Interaction 31)
 
-Feature prompts (3–4) are **new requirements**.  
-Audit (2), stale-server (5), precision (8), magnitude (9), and review (10) are **verification / corrective / understanding** lessons.
+Numbering above is thematic; the full Cursor turn list is Interactions **1–31** in `AI_FULL_INTERACTIONS.md` (includes short push/status messages and three Cursor system meta prompts).  
+
+Feature prompts are **new requirements**. Audit, stale-server, precision, magnitude, and review turns are **verification / corrective / understanding** lessons.
 
 ## Latest verification (submission-completeness pass)
 

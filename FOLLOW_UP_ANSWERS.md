@@ -1,7 +1,7 @@
 # Follow-up Answers
 
 Answers to the Nucleus Security Engineering Intern assessment Gist questions.  
-AI records: [`AI_USAGE.md`](AI_USAGE.md), [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md).  
+AI records: [`AI_USAGE.md`](AI_USAGE.md), [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md), [`AI_FULL_INTERACTIONS.md`](AI_FULL_INTERACTIONS.md).  
 Webhook review: [`CODE_REVIEW.md`](CODE_REVIEW.md).
 
 Personal verification notes below state only what the conversation record supports. Where a personal action was not established, that limitation is written plainly.
@@ -25,9 +25,11 @@ Work went through these stages (same order as the transcript):
 7. Interview-style docs polish  
 8. Precision fix — destructive 16-digit `format_result`  
 9. Public-repo cleanup — `1e50` magnitude/quantize consistency  
-10. Pre-submission technical review — webhook SQLite realism, auth vs authz, precision cases, parser/tests, merge priorities (docs/understanding; no calculator rewrite)
+10. Pre-submission technical review — webhook SQLite realism, auth vs authz, precision cases, parser/tests, merge priorities (docs/understanding; no calculator rewrite)  
+11. Submission-completeness documentation  
+12. Final AI disclosure recovery into `AI_FULL_INTERACTIONS.md` (this packaging pass)
 
-Recoverable prompt text, paraphrases, and verified outputs are in `AI_PROMPT_TRANSCRIPT.md`. Full Cursor chat history still exists in the IDE; this repository does **not** contain a complete token-level export. Where an entry is a paraphrase or summary rather than a pasted verbatim prompt, the transcript says so.
+Original candidate prompts for this Cursor assessment session are recovered verbatim in `AI_FULL_INTERACTIONS.md` (31 interactions from the local agent JSONL). User-visible AI text is included with tool JSON omitted. `AI_PROMPT_TRANSCRIPT.md` is the short index. ChatGPT drafting chats were **not** found in accessible Cursor archives and are not reproduced as verbatim transcripts.
 
 Cursor drafted `CODE_REVIEW.md` and most of the implementation. I treat that as material to verify against the Gist and tests, not as automatically correct.
 
@@ -134,7 +136,7 @@ Browser E2E (e.g. Playwright), CI, and basic public-deploy hardening—not accou
 
 ### 4. If you used AI: prompts; what it did well; poorly; how prompting changed
 
-Prompts/outputs: `AI_USAGE.md`, `AI_PROMPT_TRANSCRIPT.md` (verbatim where exported/quoted; otherwise annotated paraphrase or summary). ChatGPT contributed to reviewing/drafting some submission material. Prompt 10 is the pre-submission technical review conversation.
+Prompts/outputs: `AI_FULL_INTERACTIONS.md` (verbatim recovered Cursor prompts + user-visible AI text), indexed by `AI_PROMPT_TRANSCRIPT.md`, summarised in `AI_USAGE.md`. ChatGPT contributed to reviewing/drafting some submission material earlier; those ChatGPT chats are **not** in the recovered Cursor JSONL.
 
 **Well:** Fast structure from the Gist; line-referenced review; thin Flask over testable `calculator.py`; incremental features without `eval`; useful when asked for realistic SQLite impact and “do not rewrite if correct.”
 
