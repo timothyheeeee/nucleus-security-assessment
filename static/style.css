@@ -1,0 +1,249 @@
+:root {
+  --bg-top: #1a2332;
+  --bg-bottom: #0f1419;
+  --panel: #243044;
+  --panel-edge: #334155;
+  --display: #0c121c;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --digit: #3a4a63;
+  --digit-hover: #4a5d7a;
+  --action: #2f3f56;
+  --operator: #c45c26;
+  --operator-hover: #d46b35;
+  --equals: #2a9d8f;
+  --equals-hover: #34b3a3;
+  --error: #f87171;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --radius: 18px;
+  --font: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 20% 0%, #2a3a52 0%, transparent 50%),
+    linear-gradient(165deg, var(--bg-top), var(--bg-bottom));
+  min-height: 100vh;
+}
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.calculator {
+  width: min(100%, 360px);
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: calc(var(--radius) + 6px);
+  padding: 1.25rem;
+  box-shadow: 0 24px 48px var(--shadow);
+}
+
+.calculator__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.calculator__heading {
+  min-width: 0;
+}
+
+.calculator__brand {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.calculator__title {
+  margin: 0.15rem 0 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.precision {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.precision__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.precision__select {
+  appearance: none;
+  background: var(--display);
+  color: var(--text);
+  border: 1px solid var(--panel-edge);
+  border-radius: 8px;
+  padding: 0.35rem 1.75rem 0.35rem 0.65rem;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 3.25rem;
+  cursor: pointer;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 55%,
+    calc(100% - 9px) 55%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.precision__select:focus-visible {
+  outline: 2px solid #e2e8f0;
+  outline-offset: 2px;
+}
+
+.display {
+  background: var(--display);
+  border-radius: var(--radius);
+  padding: 1.1rem 1rem;
+  font-size: clamp(1.35rem, 6vw, 2.35rem);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  line-height: 1.2;
+  border: 1px solid #1e293b;
+  min-height: 3.5rem;
+  scrollbar-width: thin;
+}
+
+.error {
+  margin: 0.35rem 0 0;
+  text-align: right;
+  color: var(--error);
+  font-size: 0.85rem;
+  min-height: 1.2rem;
+}
+
+.error[hidden] {
+  display: none;
+}
+
+.keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.key {
+  appearance: none;
+  border: none;
+  border-radius: 12px;
+  min-height: 3.15rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.12s ease, transform 0.08s ease;
+}
+
+.key:hover {
+  transform: translateY(-1px);
+}
+
+.key:active {
+  transform: translateY(1px);
+}
+
+.key:focus-visible {
+  outline: 2px solid #e2e8f0;
+  outline-offset: 2px;
+}
+
+.key--digit {
+  background: var(--digit);
+}
+
+.key--digit:hover {
+  background: var(--digit-hover);
+}
+
+.key--action {
+  background: var(--action);
+  color: #cbd5e1;
+}
+
+.key--operator {
+  background: var(--operator);
+}
+
+.key--operator:hover,
+.key--operator.is-active {
+  background: var(--operator-hover);
+}
+
+.key--equals {
+  grid-column: 1 / -1;
+  background: var(--equals);
+}
+
+.key--equals:hover {
+  background: var(--equals-hover);
+}
+
+.key--equals:disabled,
+.key:disabled {
+  opacity: 0.55;
+  cursor: wait;
+  transform: none;
+}
+
+@media (max-width: 380px) {
+  .page {
+    padding: 0.75rem;
+  }
+
+  .calculator {
+    padding: 1rem;
+  }
+
+  .calculator__header {
+    flex-wrap: wrap;
+  }
+
+  .precision {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .key {
+    min-height: 2.85rem;
+    font-size: 1.05rem;
+  }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <main class="page">
+    <section class="calculator" aria-label="Calculator">
+      <header class="calculator__header">
+        <div class="calculator__heading">
+          <p class="calculator__brand">Nucleus Assessment</p>
+          <h1 class="calculator__title">Calculator</h1>
+        </div>
+        <label class="precision" for="decimal-places">
+          <span class="precision__label">Decimal places</span>
+          <select id="decimal-places" class="precision__select" aria-label="Decimal places">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+          </select>
+        </label>
+      </header>
+
+      <div
+        id="display"
+        class="display"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label="Calculator display"
+      >0</div>
+
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <div class="keys" role="group" aria-label="Calculator keypad">
+        <button type="button" class="key key--action" data-action="clear" aria-label="Clear">AC</button>
+        <button type="button" class="key key--action" data-action="backspace" aria-label="Backspace">⌫</button>
+        <button type="button" class="key key--action" data-paren="(" aria-label="Open parenthesis">(</button>
+        <button type="button" class="key key--action" data-paren=")" aria-label="Close parenthesis">)</button>
+
+        <button type="button" class="key key--digit" data-digit="7">7</button>
+        <button type="button" class="key key--digit" data-digit="8">8</button>
+        <button type="button" class="key key--digit" data-digit="9">9</button>
+        <button type="button" class="key key--operator" data-operator="/" aria-label="Divide">÷</button>
+
+        <button type="button" class="key key--digit" data-digit="4">4</button>
+        <button type="button" class="key key--digit" data-digit="5">5</button>
+        <button type="button" class="key key--digit" data-digit="6">6</button>
+        <button type="button" class="key key--operator" data-operator="*" aria-label="Multiply">×</button>
+
+        <button type="button" class="key key--digit" data-digit="1">1</button>
+        <button type="button" class="key key--digit" data-digit="2">2</button>
+        <button type="button" class="key key--digit" data-digit="3">3</button>
+        <button type="button" class="key key--operator" data-operator="-" aria-label="Subtract">−</button>
+
+        <button type="button" class="key key--action" data-action="sign" aria-label="Toggle sign">±</button>
+        <button type="button" class="key key--digit" data-digit="0">0</button>
+        <button type="button" class="key key--digit" data-digit="." aria-label="Decimal point">.</button>
+        <button type="button" class="key key--operator" data-operator="+" aria-label="Add">+</button>
+
+        <button type="button" class="key key--equals" data-action="equals" aria-label="Equals">=</button>
+      </div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='script.js') }}?v=parens-2"></script>
+</body>
+</html>
