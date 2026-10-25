@@ -4,11 +4,12 @@ This file supports the Nucleus assessment requirement to share AI prompts and ou
 
 ## Honesty constraints
 
-- **Verbatim status:** Most historical Cursor prompts/outputs are **NOT RECOVERABLE** as full text in this repository (chat was not exported byte-for-byte). Entries below are annotated summaries tied to artefacts—not labelled “verbatim” unless quoted.
-- ChatGPT also helped draft some editorial / assessment instruction text for the candidate; that is AI assistance and is disclosed here rather than hidden.
+- **Export status:** Most historical Cursor prompts/outputs are **not checked into this repository as full verbatim dumps**. The original text for many interactions still exists in Cursor chat history for this project; absence from git is an **export gap**, not proof the text was destroyed.
+- Entries below are annotated: paraphrase, summary, quoted fragment, or verified artefact. Nothing here invents verbatim text that was not recovered.
+- **ChatGPT** also helped review and draft some editorial / assessment-instruction / submission wording for the candidate. That is AI assistance and is disclosed here rather than hidden. ChatGPT did not replace the Cursor-implemented calculator runtime.
 - No secrets/tokens from `gh` login are recorded in these markdown files.
 
-Tool: **Cursor** (agent labelled Auto / Composer-family in-product).  
+Tool: **Cursor** (agent labelled Auto / Composer-family in-product), plus **ChatGPT** for some submission drafting.  
 Assessment Gist: https://gist.github.com/zlee-nucleussec/642cf8247c11e7a34bb03e318af549b4
 
 ---
@@ -21,7 +22,7 @@ Assessment Gist: https://gist.github.com/zlee-nucleussec/642cf8247c11e7a34bb03e3
 
 **Prompt text status:**  
 The candidate pasted a long “MASTER CURSOR AGENT PROMPT / Nucleus Security…” message into Cursor.  
-**Full verbatim text:** available in the Cursor chat transcript (too long to duplicate here without lossy truncation).  
+**Full verbatim text:** still present in Cursor chat history; **not** duplicated unabridged in this file (length / export choice).
 
 **Recoverable constraints from that prompt (accurate paraphrase):**
 
@@ -49,7 +50,7 @@ The candidate pasted a long “MASTER CURSOR AGENT PROMPT / Nucleus Security…�
 
 **Objective:** Staff-style audit; find real defects; fix MUST FIX only; no commit/push.
 
-**Prompt text status:** Present in Cursor chat as the “Prompt 2 / final engineering and security audit” message (full text in chat).
+**Prompt text status:** Present in Cursor chat as the “Prompt 2 / final engineering and security audit” message (full text in chat; not unabridged here).
 
 **AI output (verified):**
 
@@ -65,7 +66,7 @@ The candidate pasted a long “MASTER CURSOR AGENT PROMPT / Nucleus Security…�
 
 **Objective:** Show full expression until `=`; precedence for chains; decimal-places dropdown (default 2); round display only; keep exact value for further maths / re-rounding.
 
-**Prompt text status:** Full enhancement brief in Cursor chat.
+**Prompt text status:** Full enhancement brief in Cursor chat (not unabridged here).
 
 **AI output (verified in code):**
 
@@ -83,7 +84,7 @@ The candidate pasted a long “MASTER CURSOR AGENT PROMPT / Nucleus Security…�
 
 **Objective:** Add `(` / `)` without rebuilding the app.
 
-**Prompt text status:** Short follow-up in Cursor chat (“need to add braket options too”).
+**Prompt text status:** Short follow-up in Cursor chat. Recoverable quoted fragment: `need to add braket options too`.
 
 **AI output (verified):**
 
@@ -121,11 +122,11 @@ Frontend also improved incomplete-expression feedback so silent no-ops are less 
 
 ---
 
-## Prompt 7 — Advanced interview submission optimisation (this pass)
+## Prompt 7 — Advanced interview submission optimisation
 
 **Objective:** Rewrite follow-ups for hiring-manager clarity, accurate AI attribution, evidence-based claims; re-verify tests; improve AI disclosure docs.
 
-**Verification this pass:**
+**Verification at that checkpoint:**
 
 ```text
 .\.venv\Scripts\python.exe -m pytest -q
@@ -138,26 +139,55 @@ Also confirmed in code/runtime: no `eval(`, precedence `10+5*2→20`, parenthese
 
 ---
 
-## Prompt 8 — Evidence-first final engineering pass (this session)
+## Prompt 8 — Evidence-first final engineering pass
 
-**Prompt text status:** NOT RECOVERABLE as a full paste here without dumping the entire user message; the instruction lived in the Cursor chat titled along the lines of “Nucleus Security assessment — evidence-first final engineering pass”. Goal excerpt: fix destructive 16-digit `format_result` reduction; use `localcontext`; add regression tests; refine webhook review accuracy; honest AI provenance; no commit/push/email.
+**Prompt text status:** Long user message in Cursor chat (evidence-first final engineering pass). Goal excerpt (paraphrase): fix destructive 16-digit `format_result` reduction; use `localcontext`; add regression tests; refine webhook review accuracy; honest AI provenance; no commit/push/email.
 
 **Outcome (verified artefacts):**
 
 - Reproduced: `format_rounded(100000000000000.005, 2)` via old `format_result` path → `100000000000000` (wrong).  
 - Fixed: working serialization preserves fraction; display rounding → `100000000000000.01`.  
 - `localcontext(WORKING_CONTEXT)` for parse/arithmetic/format; thread consistency test.  
-- pytest: **70 passed**.  
+- pytest at that commit: **70 passed**.  
 - `CODE_REVIEW.md` impact wording tightened (SQLite execute / connection close / HMAC).  
-- Docs/email draft updated; `FINAL_AUDIT_REPORT.md` added.
 
 **Re-prompt?** N/A (single engineering gate).  
 **Classification:** Defect fix + compliance documentation (not a new calculator feature).
 
 ---
 
+## Prompt 9 — Final repository cleanup and consistency audit
+
+**Prompt text status:** Long user message in Cursor chat (“FINAL REPOSITORY CLEANUP AND SUBMISSION CONSISTENCY AUDIT”). Not pasted unabridged here; constraints paraphrased accurately below.
+
+**Recoverable constraints (paraphrase):**
+
+- Keep employer-facing deliverables public; move private email/audit/checklist files outside the git tree  
+- Synchronise AI disclosure across docs; expand follow-ups prompt-by-prompt  
+- Investigate `1e50` parse-vs-quantize boundary; scoped fix + regression  
+- Create private `SUBMISSION_EMAIL_FINAL.md`; no commit/push/email without approval  
+
+**AI output (verified this pass):**
+
+- Magnitude cap aligned with display quantize budget (`MAX_ABS_ADJUSTED_EXPONENT = 41`)  
+- Regression: `1e50` rejected consistently; near-limit `1e40` still roundable  
+- Private copies under sibling `nucleus-submission-private/`  
+- Docs updated; agent-run pytest: **72 passed** (`py -3 -m pytest -q`, Python 3.14.3)  
+
+**Classification:** Cleanup + boundary fix + documentation sync.
+
+---
+
+## ChatGPT (submission drafting)
+
+**Role:** Secondary AI used to review/draft assessment instruction text and help polish submission wording.  
+**Not claimed:** ChatGPT did not author the live calculator implementation in this repository.  
+**Status:** Exact ChatGPT chat exports are **not** included in this repo unless the candidate pastes them later.
+
+---
+
 ## How to give Nucleus the “full” prompts
 
-1. Point reviewers to this file + `AI_USAGE.md`.  
-2. If they need unabridged chats, export from Cursor (candidate action)—this repo does **not** currently contain a complete verbatim dump.  
-3. Do not claim full compliance with “all prompts and outputs” beyond what is recoverable above.
+1. Point reviewers to this file + `AI_USAGE.md` + `FOLLOW_UP_ANSWERS.md`.  
+2. If they need unabridged Cursor chats, export from Cursor (candidate action)—this repo documents recoverable content and artefacts, not a complete dump.  
+3. Do not claim full token-level compliance beyond what is recoverable above.

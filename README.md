@@ -14,6 +14,8 @@ This repository contains:
 
 Official assessment source: [Engineering Intern Interview Questions Gist](https://gist.github.com/zlee-nucleussec/642cf8247c11e7a34bb03e318af549b4)
 
+Public repository: https://github.com/timothyheeeee/nucleus-security-assessment
+
 ## Technologies
 
 - Python 3.11+ (developed/tested on Python 3.14)
@@ -51,7 +53,8 @@ Official assessment source: [Engineering Intern Interview Questions Gist](https:
 - Working arithmetic uses `decimal.localcontext` with **50 significant digits** (`WORKING_PREC`) — finite, not infinite exactness
 - API `result` is a working-precision serialization (bounded length/magnitude)
 - API `display` applies user decimal places with `ROUND_HALF_UP` on the full working value
-- Numeric strings are capped (`MAX_NUMERIC_LENGTH = 64`); extreme exponents are rejected with JSON 400 errors
+- Magnitude is capped so integer digits plus up to 8 display places fit in the 50-digit working budget (`MAX_ABS_ADJUSTED_EXPONENT = 41`); values such as `1e50` are rejected consistently at parse and round time
+- Numeric strings are capped (`MAX_NUMERIC_LENGTH = 64`); extreme exponents return JSON 400 errors
 
 **Scope relative to the Gist**
 
@@ -98,10 +101,12 @@ The server binds to `127.0.0.1` with Flask debug mode **off** by default.
 ## Run tests
 
 ```powershell
-python -m pytest -v
+python -m pytest -q
 ```
 
-Latest agent-run suite: **70 passed**, 0 failed, 0 skipped (`python -m pytest -q`).
+Latest agent-run suite (this cleanup pass): **72 passed**, 0 failed, 0 skipped.  
+Command: `py -3 -m pytest -q` · Python 3.14.3 · project `.venv` available.  
+These results were produced in the Cursor agent environment unless you re-run them yourself.
 
 ## API example
 
@@ -193,13 +198,13 @@ Browser (expression state + rounding preference)
 
 ## Known limitations
 
-- No browser end-to-end automation in CI — see [`MANUAL_VERIFICATION.md`](MANUAL_VERIFICATION.md)
+- No browser end-to-end automation in CI — manual browser checks are left to the candidate before submit
 - No scientific functions — only `+ − × ÷`, numbers, and parentheses
 - `Decimal` precision is finite (configured working/display contexts); display rounding is separate
 - Not a hardened production deployment (no TLS termination, rate limiting, or reverse proxy config)
 - Frontend calculation always requires the backend (offline use not supported)
 - Long expressions scroll horizontally inside the display; very long input is length-limited server-side
-- Full verbatim Cursor chat transcripts are summarised in-repo; unabridged export is optional if reviewers request it
+- AI prompts/outputs are documented as recoverable summaries plus artefact links; a complete token-level Cursor export is not checked into this repo (see `AI_PROMPT_TRANSCRIPT.md`)
 
 ## Possible future improvements
 
@@ -215,7 +220,3 @@ Browser (expression state + rounding preference)
 | [`AI_USAGE.md`](AI_USAGE.md) | AI assistance overview |
 | [`AI_PROMPT_TRANSCRIPT.md`](AI_PROMPT_TRANSCRIPT.md) | Chronological recoverable prompt/output record |
 | [`FOLLOW_UP_ANSWERS.md`](FOLLOW_UP_ANSWERS.md) | Answers to official follow-up questions |
-| [`MANUAL_VERIFICATION.md`](MANUAL_VERIFICATION.md) | Browser checks for the candidate before submit |
-| [`PERSONAL_CONFIRMATION_CHECKLIST.md`](PERSONAL_CONFIRMATION_CHECKLIST.md) | Private checklist (fill confirms; not required in email body) |
-| [`SUBMISSION_EMAIL_DRAFT.md`](SUBMISSION_EMAIL_DRAFT.md) | Full email draft (copy/send manually) |
-| [`FINAL_AUDIT_REPORT.md`](FINAL_AUDIT_REPORT.md) | Evidence-first audit report for this pass |

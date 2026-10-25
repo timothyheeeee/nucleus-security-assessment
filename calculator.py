@@ -17,17 +17,18 @@ from typing import List, Union
 
 # Working arithmetic precision (significant digits). Finite — not mathematical exactness.
 WORKING_PREC = 50
-# Soft cap on magnitude via Decimal adjusted exponent (base-10).
-MAX_ABS_ADJUSTED_EXPONENT = 50
+MIN_DECIMAL_PLACES = 0
+MAX_DECIMAL_PLACES = 8
+DEFAULT_DECIMAL_PLACES = 2
+# Cap magnitude so integer digits + max display places fit in WORKING_PREC.
+# quantize(n, 10^-p) needs roughly adjusted()+1+p significant digits when |n| >= 1.
+MAX_ABS_ADJUSTED_EXPONENT = WORKING_PREC - MAX_DECIMAL_PLACES - 1  # 41
 # Max characters for a numeric token or serialized working result (DoS bound).
 MAX_NUMERIC_LENGTH = 64
 MAX_EXPRESSION_LENGTH = 200
 # Backwards-compatible alias used by older tests/docs.
 MAX_INPUT_LENGTH = MAX_NUMERIC_LENGTH
 
-MIN_DECIMAL_PLACES = 0
-MAX_DECIMAL_PLACES = 8
-DEFAULT_DECIMAL_PLACES = 2
 SUPPORTED_OPERATORS = frozenset({"+", "-", "*", "/"})
 
 # Explicit context used for arithmetic and working serialization (not process-global).
@@ -151,11 +152,22 @@ def format_rounded(value: Decimal, decimal_places: int) -> str:
     """
     places = parse_decimal_places(decimal_places)
 
-    with localcontext(WORKING_CONTEXT.copy()):
+    with localcontext(WORKING_CONTEXT.copy()) as ctx:
         number = +value
         _check_magnitude(number, "result")
 
+        # Reject values that cannot be quantized to `places` within WORKING_PREC.
+        if number.copy_abs() >= 1:
+            digits_needed = number.adjusted() + 1 + places
+            if digits_needed > WORKING_PREC:
+                raise CalculationError(
+                    "Result cannot be rounded to the requested decimal places "
+                    "within supported precision limits"
+                )
+
         quantum = Decimal(1).scaleb(-places)
+        # Extra headroom for the quantize step only (still bounded by check above).
+        ctx.prec = WORKING_PREC + places + 2
         try:
             rounded = number.quantize(quantum, rounding=ROUND_HALF_UP)
         except (InvalidOperation, Overflow, Underflow) as exc:

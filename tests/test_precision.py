@@ -1,6 +1,7 @@
 """Regression tests for working vs display precision and thread context."""
 
 import threading
+from decimal import Decimal
 
 import pytest
 
@@ -96,6 +97,19 @@ class TestWorkingVsDisplayPrecision:
     def test_giant_exponent_rejected(self):
         with pytest.raises(CalculationError):
             parse_number("1e999999")
+
+    def test_one_e50_rejected_consistently(self):
+        # 1e50 passes a naive adjusted<=50 check but cannot ROUND_HALF_UP to
+        # fractional places within WORKING_PREC=50 — magnitude cap prevents that.
+        with pytest.raises(CalculationError, match="exceeds supported limits"):
+            parse_number("1e50")
+        with pytest.raises(CalculationError):
+            format_rounded(Decimal("1e50"), 2)
+
+    def test_near_limit_still_roundable(self):
+        # adjusted() == 40 fits with up to 8 decimal places under WORKING_PREC=50.
+        value = parse_number("1e40")
+        assert format_rounded(value, 2) == "10000000000000000000000000000000000000000"
 
     def test_overlong_rejected(self):
         with pytest.raises(CalculationError, match="maximum length"):
